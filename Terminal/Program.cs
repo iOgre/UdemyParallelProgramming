@@ -10,33 +10,32 @@ namespace Terminal
     {
         public static void Main(string[] args)
         {
-            var cts = new CancellationTokenSource();
-            var token = cts.Token;
-            var t = new Task(() =>
-            {
-                Console.WriteLine("I take 5 seconds");
-                for (int i = 0; i < 5; i++)
-                {
-                    token.ThrowIfCancellationRequested();
-                    Thread.Sleep(1000);
-                }
-                Console.WriteLine("I am done in 5 seconds");
-                
-            }, token);
-            t.Start();
-            Task t2 = Task.Factory.StartNew(() =>
-            {
-                Console.WriteLine("I take 3 seconds");
-                Thread.Sleep(3000);
-                Console.WriteLine("3 seconds wait done");
-            }, token);
-
-
-            Task.WaitAll( new [] {t, t2}, 4000);
-             Console.WriteLine($" Task t status is {t.Status}, task t2 status is {t2.Status}");
-            //Console.ReadKey();
+            Test();
             Console.WriteLine("Main program done");
             Console.ReadKey();
+        }
+
+        private static void Test()
+        {
+            var t = Task.Factory.StartNew(() => throw new InvalidOperationException("Can't do this")
+            {
+                Source = "t"
+            });
+            var t2 = Task.Factory.StartNew(() => throw new AccessViolationException("Can't access this")
+            {
+                Source = "t2"
+            });
+            try
+            {
+                Task.WaitAll(t, t2);
+            }
+            catch (AggregateException ae)
+            {
+                foreach (var e in ae.InnerExceptions)
+                {
+                    Console.WriteLine($"Exception {e.GetType()} from {e.Source} ");
+                }
+            }
         }
     }
 }
