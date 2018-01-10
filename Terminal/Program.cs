@@ -9,27 +9,23 @@ namespace Terminal
     {
         public static void Main(string[] args)
         {
-            var cts = new CancellationTokenSource(3000);
-
-            var token = cts.Token;
-            token.Register(() => { Console.WriteLine("Cancellation requested"); });
-            var t = new Task(() =>
+           var planned = new CancellationTokenSource();
+            var preventative = new CancellationTokenSource();
+            var emergency = new CancellationTokenSource();
+            var paranoid =
+                CancellationTokenSource.CreateLinkedTokenSource(planned.Token, preventative.Token, emergency.Token);
+            Task.Factory.StartNew(() =>
             {
                 int i = 0;
                 while (true)
                 {
-                    token.ThrowIfCancellationRequested();
-                    Console.WriteLine($"{i++} \t");
+                    paranoid.Token.ThrowIfCancellationRequested();
+                    Console.WriteLine($"{i++}\t");
+                    Thread.Sleep(1000);
                 }
-            }, token);
-            Task.Factory.StartNew(() =>
-            {
-                token.WaitHandle.WaitOne();
-                Console.WriteLine("Wait handle released, cancelaltion was requested");
-            });
-            t.Start();
-            Console.ReadLine();
-            cts.Cancel();
+            }, paranoid.Token);
+            Console.ReadKey();
+            emergency.Cancel();
             Console.WriteLine("Main program done");
             Console.ReadKey();
         }
