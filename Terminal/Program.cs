@@ -2,6 +2,7 @@
 using System.Data;
 using System.Threading;
 using System.Threading.Tasks;
+using System.Windows.Markup;
 
 namespace Terminal
 {
@@ -9,23 +10,18 @@ namespace Terminal
     {
         public static void Main(string[] args)
         {
-           var planned = new CancellationTokenSource();
-            var preventative = new CancellationTokenSource();
-            var emergency = new CancellationTokenSource();
-            var paranoid =
-                CancellationTokenSource.CreateLinkedTokenSource(planned.Token, preventative.Token, emergency.Token);
-            Task.Factory.StartNew(() =>
+            var cts = new CancellationTokenSource();
+            var token = cts.Token;
+             
+            var t = new Task(() =>
             {
-                int i = 0;
-                while (true)
-                {
-                    paranoid.Token.ThrowIfCancellationRequested();
-                    Console.WriteLine($"{i++}\t");
-                    Thread.Sleep(1000);
-                }
-            }, paranoid.Token);
+                Console.WriteLine("Press any key to disarm, you have 5 seconds");
+              bool cancelled =  token.WaitHandle.WaitOne(5000);
+               Console.WriteLine(cancelled ? "Disarmed" : "Boom");
+            }, token);
             Console.ReadKey();
-            emergency.Cancel();
+            cts.Cancel();
+            
             Console.WriteLine("Main program done");
             Console.ReadKey();
         }
