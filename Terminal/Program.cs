@@ -10,7 +10,18 @@ namespace Terminal
     {
         public static void Main(string[] args)
         {
-            Test();
+
+            try
+            {
+                Test();
+            }
+            catch (AggregateException ae)
+            {
+                foreach (var e in ae.InnerExceptions)
+                {
+                   Console.WriteLine($"Handled elsewhere {e.GetType()}"); 
+                }
+            }
             Console.WriteLine("Main program done");
             Console.ReadKey();
         }
@@ -31,10 +42,16 @@ namespace Terminal
             }
             catch (AggregateException ae)
             {
-                foreach (var e in ae.InnerExceptions)
+                ae.Handle(e =>
                 {
-                    Console.WriteLine($"Exception {e.GetType()} from {e.Source} ");
-                }
+                    if (e is InvalidOperationException)
+                    {
+                        Console.WriteLine("Invalid op!");
+                        return true;
+                    }
+
+                    return false;
+                });
             }
         }
     }
