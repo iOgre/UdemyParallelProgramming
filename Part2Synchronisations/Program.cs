@@ -21,13 +21,13 @@ namespace Part2Synchronisations
             //+=
             // op1: temp <- get_Balance() + amount
             // op2: set_Balance(temp)
-            Interlocked.Add(ref _balance, amount);
+            _balance += amount;
         }
 
 
         public void Widthdraw(int amount)
         {
-            Interlocked.Add(ref _balance, -amount);
+            _balance -= amount;
         }
     }
 
@@ -37,20 +37,41 @@ namespace Part2Synchronisations
         {
             var tasks = new List<Task>();
             var ba = new BankAccount();
+            SpinLock sl = new SpinLock();
             for (int i = 0; i < 10; i++)
             {
                 tasks.Add(Task.Factory.StartNew(() =>
                 {
                     for (int j = 0; j < 1000; j++)
                     {
-                        ba.Deposit(100);
+                        bool lockTaken = false;
+                        try
+                        {
+                            sl.Enter(ref lockTaken);
+                            ba.Deposit(100);
+                        }
+                        finally
+                        {
+                            if (lockTaken) sl.Exit();
+                        }
+
                     }
                 }));
                 tasks.Add(Task.Factory.StartNew(() =>
                 {
                     for (int j = 0; j < 1000; j++)
                     {
-                        ba.Widthdraw(100);
+                        bool lockTaken = false;
+                        try
+                        {
+                            sl.Enter(ref lockTaken);
+                            ba.Widthdraw(100);
+                        }
+                        finally
+                        {
+                            if (lockTaken) sl.Exit();
+                        }
+                       
                     }
                 }));
             }
