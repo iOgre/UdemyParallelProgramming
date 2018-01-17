@@ -4,6 +4,8 @@ Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Terminal", "Terminal\Termin
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Part2Synchronisations", "Part2Synchronisations\Part2Synchronisations.csproj", "{65375913-A49D-42FB-A0AE-3D2041BA0E43}"
 EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "LockRecursion", "LockRecursion\LockRecursion.csproj", "{54EDCAE1-4A29-4B6D-AC12-EB47004985AF}"
+EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|Any CPU = Debug|Any CPU
@@ -18,5 +20,9 @@ Global
 		{65375913-A49D-42FB-A0AE-3D2041BA0E43}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{65375913-A49D-42FB-A0AE-3D2041BA0E43}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{65375913-A49D-42FB-A0AE-3D2041BA0E43}.Release|Any CPU.Build.0 = Release|Any CPU
+		{54EDCAE1-4A29-4B6D-AC12-EB47004985AF}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{54EDCAE1-4A29-4B6D-AC12-EB47004985AF}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{54EDCAE1-4A29-4B6D-AC12-EB47004985AF}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{54EDCAE1-4A29-4B6D-AC12-EB47004985AF}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 EndGlobal
